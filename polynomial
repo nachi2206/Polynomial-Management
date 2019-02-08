@@ -1,0 +1,192 @@
+#include<conio.h>
+#include<stdlib.h>
+#include<math.h>
+int calc_coeff(int n,int r);
+void Create(int a,int b,int n);
+void generate();
+void display(struct llt *start);
+void add(struct llt *start1,struct llt *start2);
+void sub(struct llt *start1,struct llt *start2);
+void mul(struct llt *start1,struct llt *start2);
+int fact(int n);
+void compt(struct llt *start);
+struct llt
+{ int power;
+int coeff;
+struct llt*next;
+};
+llt *save[50];
+int k=0;
+int calc_coeff(int n,int r)
+{ float temp;
+temp=(int)fact(n)/(fact(r)*fact(n-r));
+return temp;
+}
+int fact(int n)
+{ if(n==0)
+return 1;
+else
+return n*fact(n-1);
+}
+void Create(int a,int b,int n)
+{ int r;
+llt *start;
+for(r=n;r!=-1;r--)
+{  if(save[k]==NULL)
+{  save[k]=(llt*)malloc(sizeof(llt));
+start=save[k];
+start->coeff=calc_coeff(n,r)*pow(a,n-r)*pow(b,r);
+start->power=(r);
+start->next=NULL;
+}
+else
+{ start->next=(llt*)malloc(sizeof(llt));
+start=start->next;
+start->coeff=calc_coeff(n,r)*pow(a,n-r)*pow(b,r);
+start->power=(r);//printf("%d",start->coeff);
+start->next=NULL;
+}
+}
+}
+void generate()
+{ int t=1;
+llt *start;
+while(t)
+{    if(save[k]==NULL)
+{   save[k]=(llt*)malloc(sizeof(llt));
+start=save[k];
+printf("Enter coefficient and power");
+scanf("%d %d",&start->coeff,&start->power);
+start->next=NULL;
+printf("Add another element 0 for NO and 1 for YES");
+scanf("%d",&t);
+}
+else
+{   start->next=(llt*)malloc(sizeof(llt));
+start=start->next;
+printf("Enter the coeff and power:");
+scanf("%d %d",&start->coeff,&start->power);
+printf("Add another element 0 for no and 1 for yes");
+scanf("%d",&t); } } }
+void display(struct llt *start)
+{  llt *ptr;
+for(ptr=start;ptr!=NULL;ptr=ptr->next)
+{  printf("%d(x)^%d",ptr->coeff,ptr->power);
+if(ptr->next!=NULL&&ptr->next->coeff>=0)
+printf("+"); }  }
+void add(struct llt *start1,struct llt *start2)
+{   llt*start;
+while(start1!=NULL||start2!=NULL)
+{   if(save[k]==NULL)
+{    save[k]=(llt*)malloc(sizeof(llt));
+start=save[k];
+start->next=NULL;  }
+else
+{   start->next=(llt*)malloc(sizeof(llt));
+start=start->next;
+start->next=NULL;
+}
+if(start1==NULL)
+{   start->coeff=start2->coeff;
+start->power=start1->power;
+start2=start1->next; }
+else if(start2==NULL)
+{   start->coeff=start1->coeff;
+start->power=start1->power;
+start1=start1->next;   }
+else if(start1->power>start2->power)
+{  start->power=start2->power;
+start->coeff=start2->coeff;
+start2=start2->next;  }
+else
+{    start->coeff=start1->coeff+start2->coeff;
+start->power=start1->power;
+start1=start1->next;
+start2=start2->next;  } }    }
+void sub(struct llt *start1,struct llt *start2)
+{   llt *i;
+for(i=start2;i!=NULL;i=i->next)
+{   i->coeff=i->coeff*(-1);
+add(start1,start2); }   }
+void mul(struct llt *start1,struct llt *start2)
+{   llt*start,*i,*j;
+for(i=start1;i!=NULL;i=i->next)
+{     for(j=start2;j!=NULL;j=j->next)
+{    if(save[k]==NULL)
+{   save[k]=(llt*)malloc(sizeof(llt));
+start=save[k];
+start->next=NULL;
+}
+else
+{    start->next=(llt*)malloc(sizeof(llt));
+start=start->next;
+start->next=NULL;
+}
+start->coeff=i->coeff*j->coeff;
+start->power=i->power+j->power;
+}//closing of j loop
+}//closing of i loop
+}
+void compt(struct llt *start)
+{   llt *i, *j;
+for(i=start;i->next!=NULL;i=i->next)
+{     for(j=i;j->next!=NULL;j=j->next)
+{    if(j->next->power==i->power)
+{     i->coeff=i->coeff+j->next->coeff;
+j->next=j->next->next;
+}
+}
+}
+}
+int main()
+{    int t,a,b,n,temp1,temp2;
+clrscr();
+printf("SELECT OPTION:\n1.To calculate Expansion\n2.For display\n3.To enter polynomial\n4.perform addition\n5.perform multiplication\n6.perform substraction\n7.exit\n");
+while(1)
+{   printf("Enter choice:");
+scanf("%d",&t);
+switch(t)
+{   case 1:printf("Enter value for a,b,n for polynomial (a+bx)^n\n");
+       scanf("%d %d %d",&a,&b,&n);
+       printf("Polynomial saved at %d\n",k);
+       save[k]=NULL;
+       Create(a,b,n);
+       k++;
+       break;
+case 2:printf("Enter number of polynomial:");
+       scanf("%d",&temp1);
+       display(save[temp1]);
+       printf("\n");
+       break;
+case 3:printf("polynomial saved at %d\n",k);
+       save[k]=NULL;
+       generate();
+       printf("\n");
+       k++;
+       break;
+case 4:printf("Enter number of polynomials which are to be added:");
+       scanf("%d %d",&temp1,&temp2);
+       printf("Added polynomial saved at %d\n",k);
+       save[k]=NULL;
+       add(save[temp1],save[temp2]);
+       k++;
+       break;
+case 5:printf("Enter Number of polynomial which is to be multiplied:");
+       scanf("%d %d",&temp1,&temp2);
+       printf("Multiplication saved at %d\n",k);
+       save[k]=NULL;
+       mul(save[temp1],save[temp2]);
+       compt(save[k]);
+       k++;
+       break;
+case 6:printf("Enter number to be subtracted:");
+       scanf("%d %d",&temp1,&temp2);
+       printf("Subtraction saved at %d\n",k);
+       save[k]=NULL;
+       sub(save[temp1],save[temp2]);
+       k++;
+       break;
+case 7:exit(0);
+}
+}
+}

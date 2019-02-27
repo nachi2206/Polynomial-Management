@@ -189,4 +189,4 @@ case 6:printf("Enter number to be subtracted:");
 case 7:exit(0);
 }
 }
-}
+}.
